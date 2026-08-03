@@ -224,7 +224,7 @@ ${r.domains.slice(0,50).join("\n")}
 
 
 
-async function main(){
+async function RedBullSS_Main()
 
 
 try{
@@ -287,4 +287,4 @@ await a.present();
 
 
 
-await main();
+await RedBullSS_Main();
