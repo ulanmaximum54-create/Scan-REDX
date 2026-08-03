@@ -38,18 +38,15 @@ const DATABASE = {
 
 async function selectReport(){
 
-    let file =
-    await DocumentPicker.openFile(
+    let file = await DocumentPicker.openFile(
         ["public.data"]
     );
 
     if(!file)
-        throw "Файл не выбран";
+        throw new Error("Файл не выбран");
 
 
-    let fm =
-    FileManager.iCloud();
-
+    let fm = FileManager.iCloud();
 
     return fm.readString(file);
 
@@ -59,31 +56,29 @@ async function selectReport(){
 
 function analyze(data){
 
-
-    let text =
-    data.toLowerCase();
+    let text = data.toLowerCase();
 
 
     let result = {
 
-        risk:0,
-        warnings:[],
-        domains:[]
+        risk: 0,
+        warnings: [],
+        domains: []
 
     };
 
 
 
-    let domains =
-    text.match(
+    let domains = text.match(
         /[a-z0-9.-]+\.[a-z]{2,}/g
     );
 
 
     if(domains){
 
-        result.domains =
-        [...new Set(domains)];
+        result.domains = [
+            ...new Set(domains)
+        ];
 
     }
 
@@ -96,11 +91,10 @@ function analyze(data){
             if(domain.includes(word)){
 
                 result.warnings.push(
-                    "Подозрительный домен: "
-                    + domain
+                    "Подозрительный домен: " + domain
                 );
 
-                result.risk +=5;
+                result.risk += 5;
 
             }
 
@@ -115,11 +109,10 @@ function analyze(data){
         if(text.includes(word)){
 
             result.warnings.push(
-                "Найдено: "
-                + word
+                "Найдено: " + word
             );
 
-            result.risk +=5;
+            result.risk += 5;
 
         }
 
@@ -132,11 +125,10 @@ function analyze(data){
         if(text.includes(word)){
 
             result.warnings.push(
-                "Sideload признак: "
-                + word
+                "Sideload признак: " + word
             );
 
-            result.risk +=15;
+            result.risk += 15;
 
         }
 
@@ -144,9 +136,10 @@ function analyze(data){
 
 
 
-    if(text.includes("freefire")
-    ||
-    text.includes("garena")){
+    if(
+        text.includes("freefire") ||
+        text.includes("garena")
+    ){
 
         result.warnings.push(
             "Free Fire найден"
@@ -180,10 +173,13 @@ KELLERSS ANALYZER v1.0
 
 
 RISK SCORE:
+
 ${r.risk}/100
 
 
+
 STATUS:
+
 ${
 r.risk < 30
 ?
@@ -200,6 +196,7 @@ r.risk < 70
 
 FINDINGS:
 
+
 ${
 r.warnings.length
 ?
@@ -212,11 +209,14 @@ r.warnings.join("\n")
 
 DOMAINS:
 
+
 ${r.domains.slice(0,50).join("\n")}
 
 
 
 ==========================
+
+Scan completed.
 
 `;
 
@@ -224,40 +224,35 @@ ${r.domains.slice(0,50).join("\n")}
 
 
 
-async function RedBullSS_Main()
 
+async function RedBullSS_Main(){
 
 try{
 
 
-let data =
-await selectReport();
+let data = await selectReport();
 
 
-let result =
-analyze(data);
+let result = analyze(data);
 
 
-let report =
-createReport(result);
+let report = createReport(result);
 
 
 
-let fm =
-FileManager.iCloud();
+let fm = FileManager.iCloud();
 
 
-let path =
-fm.joinPath(
-fm.documentsDirectory(),
-"KellerSS_Report.txt"
+let path = fm.joinPath(
+    fm.documentsDirectory(),
+    "KellerSS_Report.txt"
 );
 
 
 
 fm.writeString(
-path,
-report
+    path,
+    report
 );
 
 
@@ -269,16 +264,17 @@ QuickLook.present(path);
 
 catch(e){
 
-let a =
-new Alert();
 
-a.title =
-"Ошибка";
+let a = new Alert();
 
-a.message =
-e.toString();
+a.title = "Ошибка";
+
+a.message = e.toString();
+
+a.addCancelAction("OK");
 
 await a.present();
+
 
 }
 
@@ -288,3 +284,4 @@ await a.present();
 
 
 await RedBullSS_Main();
+
